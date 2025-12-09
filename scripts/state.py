@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import pygame
 
+from .controlled_entity import ControlledEntity
+
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -45,3 +47,21 @@ class StateMachine:
 
     def update(self, dt):
         self.current_state.update(dt)
+
+
+class ControlledEntityState(State):
+    def __init__(self, entity):
+        super().__init__()
+        self.entity: ControlledEntity = entity
+        self.id: str = self.__class__.__name__.lower()
+
+
+    def enter(self):
+        self.fighter.set_animation(self.id)
+        return super().enter()
+
+    
+    def switch_to(self, state: str):
+        self.fighter.state_machine.set_state(state)
+        self.exit()
+        return super().switch_to(state)

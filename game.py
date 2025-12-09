@@ -7,7 +7,8 @@ import sys
 import time
 
 from scripts.colors import *
-from scripts.controller import RandomController
+from scripts.controller import Controller
+from scripts.damage import DamageHitbox
 
 
 WIDTH, HEIGHT = 800, 640
@@ -21,7 +22,7 @@ class Game:
         self.display: pygame.Surface = pygame.display.set_mode(self.size)
 
         from scripts.fighter.fighter import Fighter
-        from scripts.damage import DamageHitbox
+        from scripts.weapon.weapon import Weapon
 
         self.window: pygame.Surface = pygame.Surface((self.width, self.height))
         self.window_scale = 3
@@ -31,7 +32,9 @@ class Game:
         self.prev_time: float = time.time()
 
         self.fighter = Fighter(self, pygame.Vector2(50,100))
-        self.fighter_2 = Fighter(self, pygame.Vector2(100, 100), controller=RandomController(self))
+        self.fighter_2 = Fighter(self, pygame.Vector2(100, 100), controller=Controller(self))
+
+        self.weapon = Weapon(self, pygame.Vector2(100,100))
 
         self.fighters: list[Fighter] = [self.fighter, self.fighter_2]
         self.damages: list[DamageHitbox] = []

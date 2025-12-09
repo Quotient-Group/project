@@ -32,7 +32,7 @@ class DamageHitbox(Entity):
 
 
 class Damage(DamageHitbox):
-    def __init__(self, game, pos, rect, mask):
-        super().__init__(game, pos, rect, mask)
+    def __init__(self, game: Game, pos: pygame.Vector2, mask: pygame.Mask = pygame.Mask((0,0))):
+        super().__init__(game, pos, mask)
 
         self.amount: float = 10

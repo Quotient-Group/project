@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import pygame
 
-from ..state import State, StateMachine
+from ..state import ControlledEntityState, StateMachine
 
 from typing import TYPE_CHECKING
 
@@ -12,31 +12,19 @@ if TYPE_CHECKING:
     from game import Game
 
 
-class FighterState(State):
-    def __init__(self, fighter):
-        super().__init__()
-        self.fighter: Fighter = fighter
-        self.id: str = self.__class__.__name__.lower()
-
-
-    def enter(self):
-        self.fighter.set_animation(self.id)
-        return super().enter()
-
-    
-    def switch_to(self, state: str):
-        self.fighter.state_machine.set_state(state)
-        self.exit()
-        return super().switch_to(state)
+class FighterState(ControlledEntityState):
+    def __init__(self, entity):
+        super().__init__(entity)
+        self.fighter = self.entity
 
 
 class FighterStateMachine(StateMachine):
     def __init__(self, fighter: Fighter, initial_state = None):
         super().__init__(initial_state)
 
-        self.fighter = fighter
+        self.fighter: Fighter = fighter
 
-        self.states = {
+        self.states: dict[FighterState] = {
             "idle": Idle(self.fighter),
             "run": Run(self.fighter),
             "attack": Attack(self.fighter),

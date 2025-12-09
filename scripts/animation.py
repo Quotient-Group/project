@@ -36,6 +36,7 @@ class AnimationManager:
         self.ended = False
 
 
+    # TODO: MAKE SURE NOT TO CALCULATE THE SURFACES EVERY TIME WITH A LIST OR LOOKUP TABLE
     def get_frame(self) -> tuple[pygame.Mask, pygame.Surface]:
         # DAMAGE HITBOX
         t: float = self.animation_time / self.data["duration"]

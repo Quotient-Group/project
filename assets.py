@@ -16,3 +16,14 @@ FIGHTER_ASSETS: dict = {
         "run": pygame.image.load("./assets/fighter/run.png").convert_alpha(),
     },
 }
+
+
+WEAPON_ASSETS: dict = {
+    "sword": {
+        "masksheets": {
+        },
+
+        "spritesheets": {
+        },
+    },
+}

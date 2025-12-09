@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import pygame
 
-from ..entity import Entity
+from ..controlled_entity import ControlledEntity
 from ..damage import DamageHitbox
 from ..colors import *
 from ..controller import Controller, PlayerController, RandomController
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from game import Game
 
 
-class Fighter(Entity):
+class Fighter(ControlledEntity):
 
     assets = FIGHTER_ASSETS
 
@@ -40,7 +40,7 @@ class Fighter(Entity):
         if controller:
             self.controller = controller
 
-        # INITIALIZE ANIMATION STUFF
+        # INITIALIZE ANIMATION MANAGER
         self.animation_manager: AnimationManager = AnimationManager(self.game)
 
         # INITIALIZE STATE MACHINE
@@ -69,9 +69,6 @@ class Fighter(Entity):
             "attack": False,
         }
 
-        self.direction_vector: pygame.Vector2 = pygame.Vector2()
-        self.flip: pygame.Vector2 = pygame.Vector2()
-
         # INITIALIZE AT IDLE
         self.set_animation("idle")
 
@@ -91,42 +88,11 @@ class Fighter(Entity):
             self.get_hurt(damage.amount)
 
 
-    def set_animation(self, anim_id: str):
-        # RETRIEVE THE ANIMATION ASSETS AND DATA
-        masksheet: pygame.Surface = self.assets["masksheets"][anim_id]
-        spritesheet: pygame.Surface = self.assets["spritesheets"][anim_id]
-        data: dict = self.animations_data[anim_id]
-
-        # SET THE ANIMATION
-        self.animation_manager.set_animation(masksheet, spritesheet, data)
-
-
     def update(self, dt: float):
-        # UPDATE STUFF
-        self.controller.update(self, dt)
-        self.state_machine.update(dt)
-        self.animation_manager.update(dt)
-
-        # GET CURRENT FRAME
-        self.mask, self.texture = self.animation_manager.get_frame()
-
-        # UPDATE DAMAGE HITBOX
-        self.damage_hitbox.set_hitbox(self.mask)
-
         if any([(self!=fighter and self.damage_hitbox.check_collision(fighter.damage_hitbox)) for fighter in self.game.fighters]):
             self.hitbox_color = RED
         else:
             self.hitbox_color = BLUE
 
         return super().update(dt)
-
-
-    def draw(self, hitbox: bool = True):
-        # DRAW TEXTURE
-        self.game.window.blit(pygame.transform.flip(self.texture, bool(self.flip.x), bool(self.flip.y)), self.pos)
-
-        # IF SET, DRAW THE HITBOX
-        if hitbox:
-            surf: pygame.Surface = self.damage_hitbox.mask.to_surface(setcolor=(*self.hitbox_color,100), unsetcolor=(0,0,0,0))
-            self.game.window.blit(surf, self.pos)
 
